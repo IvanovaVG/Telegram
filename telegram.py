@@ -15,7 +15,7 @@ client = TelegramClient('anon', os.getenv('API_ID'), os.getenv('API_HASH'))
 async def run():
     await client.connect()
 
-    await client.start(os.getenv('PHONE'))
+    await client.start()
 
 
 @client.on(events.NewMessage(chats=['tutby_official', 'FloodInterview', 'FaangInterview', 'belteanews', 'BotFather', 'CryptoComOfficial']))
