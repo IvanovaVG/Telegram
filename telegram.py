@@ -1,4 +1,6 @@
 from time import sleep
+from typing import Dict, Any, Union
+
 from telethon import TelegramClient, events
 import os
 import time
@@ -7,17 +9,22 @@ import nest_asyncio
 from send_request import create_session
 
 client = TelegramClient('anon', os.getenv('API_ID'), os.getenv('API_HASH'))
-print('{}'.format(os.getenv('CHATS')))
+# print('{}'.format(os.getenv('CHATS')))
 
 
-@client.on(events.NewMessage(chats=['tutby_official', 'FloodInterview',' FaangInterview', 'belteanews', 'BotFather', 'CryptoComOfficial']))
+async def run():
+    await client.connect()
+
+    await client.start(os.getenv('PHONE'))
+
+
+@client.on(events.NewMessage(chats=['tutby_official', 'FloodInterview', 'FaangInterview', 'belteanews', 'BotFather', 'CryptoComOfficial']))
 async def my_event_handler(event):
     time_current = time.localtime()
     dt = event.message.date
-    print(dt)
-    chat_from = event.chat if event.chat else (await event.get_chat())  # telegram MAY not send the chat enity
+    chat_from = event.chat if event.chat else (await event.get_chat())
     chat_title = chat_from.username
-    message_from_channel = {
+    message_from_channel: Dict[str, Union[str, Any]] = {
         "source": "telegram",
         "sender": chat_title,
         "content": event.raw_text,
@@ -35,5 +42,9 @@ async def my_event_handler(event):
         return asyncio.run(await create_session(message_from_channel))
 
 
-client.start(phone=os.getenv('PHONE'))
-#client.run_until_disconnected()
+
+
+
+client.loop.run_until_complete(run())
+client.run_until_disconnected()
+
